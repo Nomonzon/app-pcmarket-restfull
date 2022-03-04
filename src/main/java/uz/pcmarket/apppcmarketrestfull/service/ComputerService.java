@@ -9,6 +9,7 @@ import uz.pcmarket.apppcmarketrestfull.payload.Message;
 import uz.pcmarket.apppcmarketrestfull.repository.ComputerRepository;
 import uz.pcmarket.apppcmarketrestfull.repository.ModelRepository;
 
+import javax.servlet.http.PushBuilder;
 import java.util.List;
 import java.util.Optional;
 
@@ -61,4 +62,31 @@ public class ComputerService {
         }
     }
 
+    public Message update(Long id, ComputerDto computerDto){
+        Optional<Product> productOptional = modelRepository.findById(computerDto.getModelId());
+        if (productOptional.isEmpty()){
+            return new Message(false, "Model not found");
+        }
+
+        Optional<Computer> computerOptional = computerRepository.findById(id);
+        if (computerOptional.isEmpty()){
+            return new Message(false, "Computer not found");
+        }
+
+        Computer computer = computerOptional.get();
+                computer.setName (computerDto.getName());
+                computer.setCpu(computerDto.getCpu());
+                computer.setGpu(computerDto.getGpu());
+                computer.setHdd(computerDto.getHdd());
+                computer.setRam(computerDto.getRam());
+                computer.setSsd(computerDto.getSsd());
+                computer.setPrice(computerDto.getPrice());
+                computer.setDiagonal(computerDto.getDiagonal());
+                computer.setPowerUnit(computerDto.getPowerUnit());
+                computer.setMotherBoard(computerDto.getMotherBoard());
+                computer.setModel(productOptional.get());
+                computerRepository.save(computer);
+
+        return new Message(true, "Computer edited");
+    }
 }
